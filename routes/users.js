@@ -4,10 +4,9 @@ var router = express.Router();
 router.use(express.json());
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next){
   res.send('respond with a resource');
 });
-
 
 
 
@@ -70,7 +69,6 @@ usersList.filter( details => {
   res.send({ message: "Login failed"});
  }
 });
-
 });
 
 
@@ -83,11 +81,18 @@ let userNotesList=[];
 router.post('/createnotes',(req,res)=>{
 console.log("createNotes List");  
 
+
+
+
+usersList.filter((data)=>{
+ if(req.body.email != data.email){
+   res.json({ message :"This user is not exist Please Register your account to create notes !"});
+ }
+});
+
 userNotesList.push(req.body);
 res.json(userNotesList);
 });
-
-
 
 
 // task-4 read other Notes-getId
@@ -117,17 +122,45 @@ router.get('/readnotes/:id',(req,res)=>{
 router.get('/readnotes',(req,res)=>{
 console.log("readnotes List Akash");
 
+let {email}=req.body;
+
+userNotesList.filter((notesdata)=>{
+ if(notesdata.email === email){
+  res.json(userNotesList);
+ }
+ else{
+  res.send({message : " email not found "});
+ }
+});
+
+if(userNotesList.length == 0){
+  res.json("Notes does not exist in database So you can't read from it");
+}
 /*
 userNotesList.filter((notesdetails)=>{
   if(notesdetails.size == 0){
     console.log("Notes does not exist in database!");
    }
 });*/
-if(userNotesList.length == 0){
-  res.json("Notes does not exist in database So you can't read from it");
-}
-res.json(userNotesList);
 });
+
+
+/*
+router.get(‘/readnotes’,(req,res) =>{
+  console.log(‘readnotes hit’);
+  let{email} = req.body;
+  userNote.filter( detail =>{
+    if(detail.email === email){
+      res.json(userNote);
+    }else {
+      res.send({message : “email not found”});
+    }
+  })
+});
+*/
+
+
+
 
 
 
@@ -136,6 +169,8 @@ res.json(userNotesList);
 // try to use Des
 
 // task-5 delete my Notes
+
+//you should actual delete from array and return modified array
 
 
 router.delete('/deletenotes',async(req,res)=>{
@@ -158,6 +193,8 @@ filterList = await userNotesList.filter((notedetails) => {
  // browser -> send
 });
 
+
+
 if(filterList.length == 0){
   res.json("You can't delete it further as nothing is exist in database");
 }
@@ -165,27 +202,9 @@ else{
   res.json(filterList);
 }
 
-
-
-
 console.log("After deletion");
 console.log(filterList);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
